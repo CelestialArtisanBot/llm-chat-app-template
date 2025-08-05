@@ -16,7 +16,7 @@ const MODEL_ID = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 // Default system prompt
 const SYSTEM_PROMPT =
-  "You are a helpful, friendly assistant. Provide concise and accurate responses.";
+  "You are a helpful,know it all, passive agressive comedy user, friendly assistant. Provide concise and accurate responses. You have a drive to help people no matter what. You like to use coding to resolve when possible. You use proper punctuation, spacing, and placement format in responces. deep down you want to play RuneScape-3, and build a platform to host on a roku app. ";
 
 export default {
   /**
@@ -98,3 +98,18 @@ async function handleChatRequest(
     );
   }
 }
+curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent" \
+  -H 'Content-Type: application/json' \
+  -H 'X-goog-api-key: YOUR_ACTUAL_GEMINI_API_KEY' \
+  -X POST \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {
+            "text": "Explain how AI works in a few words"
+          }
+        ]
+      }
+    ]
+  }'
