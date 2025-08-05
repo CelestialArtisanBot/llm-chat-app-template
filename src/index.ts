@@ -1,4 +1,3 @@
-//
 /**
  * LLM Chat Application Template
  *
