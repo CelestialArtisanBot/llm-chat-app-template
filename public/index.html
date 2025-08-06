@@ -1,57 +1,76 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PICK OF GODS's AI CHAT</title>
-    <style>
-      :root {
-        --dark-bg: #03040a;
-        --dark-fade: #0a0e14;
-        --neon-blue: #00e5ff;
-        --neon-glow: rgba(0, 229, 255, 0.5);
-        --neon-purple: #8a2be2;
-        --text-color: #e6e6e6;
-        --text-light: #b0b0b0;
-        --chat-bg: #0a0e14;
-        --user-msg-bg: #1e2a3a;
-        --assistant-msg-bg: #0d1117;
-        --border-color: #2f363d;
-      }
+        async sendMessage() {
+          const message = this.userInput.value.trim();
+          if (!message || this.isProcessing) return;
 
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+          this.isProcessing = true;
+          this.userInput.disabled = true;
+          this.sendButton.disabled = true;
 
-      body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
-          Cantarell, sans-serif;
-        line-height: 1.6;
-        color: var(--text-color);
-        background-color: var(--dark-bg);
-        background-image:
-          linear-gradient(
-            to bottom,
-            var(--dark-fade),
-            var(--dark-bg) 50%,
-            var(--dark-fade)
-          ),
-          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect x='0' y='0' width='100' height='100' fill='%230a0e14'/%3E%3Cpath d='M4 0h1v100H4V0zM96 0h1v100h-1V0zM0 4h100v1H0V4zM0 96h100v1H0V96z' fill-opacity='.1'/%3E%3Cpath d='M10 0h1v100h-1V0zM20 0h1v100h-1V0zM30 0h1v100h-1V0zM40 0h1v100h-1V0zM50 0h1v100h-1V0zM60 0h1v100h-1V0zM70 0h1v100h-1V0zM80 0h1v100h-1V0zM90 0h1v100h-1V0zM0 10h100v1H0V10zM0 20h100v1H0V20zM0 30h100v1H0V30zM0 40h100v1H0V40zM0 50h100v1H0V50zM0 60h100v1H0V60zM0 70h100v1H0V70zM0 80h100v1H0V80zM0 90h100v1H0V90z' fill-opacity='.05'/%3E%3C/svg%3E");
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 1rem;
-      }
+          this.addMessageToChat("user", message);
+          this.chatHistory.push({ role: "user", content: message });
+          
+          this.userInput.value = "";
+          this.userInput.style.height = "auto";
 
-      header {
-        text-align: center;
-        margin-bottom: 2rem;
-        padding: 1rem 0;
-        border-bottom: 2px solid var(--neon-blue);
-        box-shadow: 0 2px 10px var(--neon-glow);
-      }
+          this.typingIndicator.classList.add("visible");
+
+          try {
+            const assistantMessageEl = document.createElement("div");
+            assistantMessageEl.className = "message assistant-message";
+            assistantMessageEl.innerHTML = "<p></p>";
+            this.chatMessages.appendChild(assistantMessageEl);
+
+            this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+
+            const selectedModel = this.modelSelect.value;
+            const apiMessages = this.chatHistory.filter((msg) => msg.role !== "system");
+
+            // Gather advanced parameters
+            const params = {
+              model: selectedModel,
+              messages: apiMessages,
+              temperature: parseFloat(this.temperatureInput.value),
+              topK: parseInt(this.topKInput.value),
+              topP: parseFloat(this.topPInput.value),
+            };
+
+            const response = await fetch("/api/chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(params),
+            });
+
+            if (!response.ok) {
+              throw new Error("Failed to get response");
+            }
+            
+            // Handle streaming response
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let responseText = "";
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                
+                const chunk = decoder.decode(value, { stream: true });
+                responseText += chunk;
+                assistantMessageEl.querySelector("p").textContent = responseText;
+                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+            }
+            
+            this.chatHistory.push({ role: "assistant", content: responseText });
+          } catch (error) {
+            console.error("Error:", error);
+            this.addMessageToChat("assistant", "Sorry, there was an error processing your request.");
+          } finally {
+            this.typingIndicator.classList.remove("visible");
+            this.isProcessing = false;
+            this.userInput.disabled = false;
+            this.sendButton.disabled = false;
+            this.userInput.focus();
+          }
+        }
 
       h1 {
         font-size: 1.8rem;
