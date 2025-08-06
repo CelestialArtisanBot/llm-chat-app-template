@@ -2,6 +2,8 @@
  * Type definitions for the LLM chat application.
  */
 
+import { Ai } from "@cloudflare/ai";
+
 export interface Env {
   /**
    * Binding for the Workers AI API.
@@ -12,6 +14,11 @@ export interface Env {
    * Binding for static assets.
    */
   ASSETS: { fetch: (request: Request) => Promise<Response> };
+  
+  /**
+   * Gemini API key.
+   */
+  GEMINI_API_KEY: string;
 }
 
 /**
