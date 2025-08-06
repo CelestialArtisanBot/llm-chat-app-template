@@ -36,3 +36,7 @@
     "test": "vitest"
   }
 }
+"scripts": {
+  "build": "npx tsc",
+  // ... other scripts
+},
