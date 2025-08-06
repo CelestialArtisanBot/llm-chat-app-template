@@ -8,8 +8,8 @@
   "build": {
     "command": "npm run build"
   },
-  "pages_dev": {
-    "static_directory": "./public"
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./public"
   }
 }
-
