@@ -1,15 +1,14 @@
-{
-  "name": "devops-worker-celestialartisanbot",
-  "main": "src/index.ts",
-  "compatibility_date": "2024-05-18",
-  "vars": {
-    "WORKERS_AI_MODEL": "@cf/meta/llama-3-8b-instruct"
-  },
-  "build": {
-    "command": "npm run build"
-  },
-  "assets": {
-    "binding": "ASSETS",
-    "directory": "./public"
-  }
-}
+name = "devops-worker-celestialartisanbot"
+main = "src/index.ts"
+compatibility_date = "2024-05-18"
+
+[vars]
+WORKERS_AI_MODEL = "@cf/meta/llama-3-8b-instruct"
+GEMINI_API_KEY = "{{ secrets.GEMINI_API_KEY }}"
+
+[build]
+command = "npm run build"
+
+[assets]
+binding = "ASSETS"
+directory = "./public"
