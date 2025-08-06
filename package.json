@@ -30,13 +30,10 @@
     "build": "npx tsc",
     "cf-typegen": "wrangler types",
     "check": "tsc --noEmit && wrangler deploy --dry-run",
-    "deploy": "wrangler deploy",
+    "deploy": "npm run build && wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
     "test": "vitest"
   }
 }
-"scripts": {
-  "build": "npx tsc",
-  // ... other scripts
-},
+
