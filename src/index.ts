@@ -9,9 +9,12 @@
  */
 
 // --- Combined types.ts content ---
+import { Ai } from "@cloudflare/ai";
+
 export interface Env {
   ASSETS: { fetch: (request: Request) => Promise<Response> };
   GEMINI_API_KEY: string;
+  AI: Ai; // This is the missing binding
 }
 
 export type ChatRole = "system" | "user" | "assistant";
@@ -22,7 +25,6 @@ export interface ChatMessage {
 }
 
 // --- Combined index.ts content ---
-import { Ai } from "@cloudflare/ai";
 
 // Default system prompt
 const SYSTEM_PROMPT = "You are a helpful, friendly assistant. Provide concise and accurate responses.";
