@@ -27,6 +27,7 @@
   },
   "private": true,
   "scripts": {
+    "build": "npx tsc",
     "cf-typegen": "wrangler types",
     "check": "tsc --noEmit && wrangler deploy --dry-run",
     "deploy": "wrangler deploy",
